@@ -1,8 +1,10 @@
 import { HiMenuAlt4 } from 'react-icons/hi';
 import { AiOutlineClose } from 'react-icons/ai';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
+
 
 import logo from '../../images/logo.png';
+import { MeowsTokenContext } from '../context/MeowsTokenContext';
 
 {/* 
   Function component to handle the menu item used in Navbar menu.
@@ -22,6 +24,8 @@ const Navbar = () => {
     {/* State is Navbar component first time loaded. */}
     const [init, setInit] = useState(false);
 
+    const { connectWallet, disconnectWallet, connectedAccount } = useContext(MeowsTokenContext);
+
     return (
         <nav>
             <div className="w-full flex md:justify-center justify-between items-center p-4">
@@ -32,9 +36,16 @@ const Navbar = () => {
                     {["Ecosystem", "Buy", "NFT/Art", "Community"].map((item, index) => (
                         <NavBarItem key={item + index} title={item} />
                     ))}
-                    <li className="bg-[#2952e3] py-2 px-7 mx-4 rounded-full cursor-pointer hover:bg-[#2546bd]">
-                        Connect wallet
-                    </li>
+                    {!connectedAccount 
+                        ? <li className="bg-[#2952e3] py-2 px-7 mx-4 rounded-full cursor-pointer hover:bg-[#2546bd]"
+                            onClick={connectWallet}>
+                            Connect wallet
+                        </li>
+                        : <li className="bg-[#2952e3] py-2 px-7 mx-4 rounded-full cursor-pointer hover:bg-[#2546bd]"
+                            onClick={disconnectWallet}>
+                            <span>{connectedAccount.substring(0,6) + "..." + connectedAccount.substring(connectedAccount.length - 4)}</span>
+                        </li>
+                    }
                 </ul>
                 <div className="flex relative">
                     {toggleMenu

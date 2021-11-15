@@ -1,7 +1,9 @@
+import React, { useContext } from 'react';
 import { AiFillPlayCircle } from 'react-icons/ai';
 import { SiEthereum } from 'react-icons/si';
 import { BsInfoCircle } from 'react-icons/bs';
 
+import { MeowsTokenContext } from '../context/MeowsTokenContext';
 import { Loader } from './'
 
 const Input = ({ placeholder, name, type, value, handleChange }) => (
@@ -16,7 +18,8 @@ const Input = ({ placeholder, name, type, value, handleChange }) => (
 );
 
 const Welcome = () => {
-
+    const { connectedAccount } = useContext(MeowsTokenContext);
+    
     const connectWallet = () => {
 
     } 
@@ -56,7 +59,7 @@ const Welcome = () => {
                             </div>
                             <div>
                                 <p className="text-white font-light text-sm">
-                                    0xjddndj...hdjd
+                                    {connectedAccount && <span>{connectedAccount.substring(0,6) + "..." + connectedAccount.substring(connectedAccount.length - 4)}</span>}
                                 </p>
                                 <p className="text-white font-semibold text-lg mt-1">
                                     MEOWs
