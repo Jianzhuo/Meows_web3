@@ -3,13 +3,13 @@ import ReactDOM from 'react-dom'
 import './index.css'
 import App from './App'
 
-import { MeowsTokenProvider } from './context/MeowsTokenContext';
+import { MeowsProvider } from './context/MeowsContext';
 
 ReactDOM.render(
-  <MeowsTokenProvider>
+  <MeowsProvider>
     <React.StrictMode>
       <App />
     </React.StrictMode>
-  </MeowsTokenProvider>,
+  </MeowsProvider>,
   document.getElementById('root')
 )

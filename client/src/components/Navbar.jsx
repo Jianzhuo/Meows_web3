@@ -4,7 +4,7 @@ import { useContext, useState } from 'react';
 
 
 import logo from '../../images/logo.png';
-import { MeowsTokenContext } from '../context/MeowsTokenContext';
+import { MeowsContext } from '../context/MeowsContext';
 
 {/* 
   Function component to handle the menu item used in Navbar menu.
@@ -24,13 +24,13 @@ const Navbar = () => {
     {/* State is Navbar component first time loaded. */}
     const [init, setInit] = useState(false);
 
-    const { connectWallet, disconnectWallet, connectedAccount } = useContext(MeowsTokenContext);
+    const { connectWallet, disconnectWallet, connectedAccount } = useContext(MeowsContext);
 
     return (
         <nav>
             <div className="w-full flex md:justify-center justify-between items-center p-4">
                 <div className="md:flex-[0.5] flex-initial justify-center items-center">
-                    <img src={logo} alt="logo" className="w-32 cursor-pointer" />
+                    <img src={logo} alt="logo" className="w-32 scale-125 cursor-pointer" />
                 </div>
                 <ul className="text-white md:flex hidden list-none flex-row justify-between items-center flex-initial">
                     {["Ecosystem", "Buy", "NFT/Art", "Community"].map((item, index) => (

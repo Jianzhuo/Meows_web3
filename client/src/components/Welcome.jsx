@@ -1,31 +1,39 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { AiFillPlayCircle } from 'react-icons/ai';
 import { SiEthereum } from 'react-icons/si';
-import { BsInfoCircle } from 'react-icons/bs';
+import { BsInfoCircle, BsFillArrowDownSquareFill, BsFillArrowDownCircleFill } from 'react-icons/bs';
+import { IoLogoOctocat } from 'react-icons/io'
 
-import { MeowsTokenContext } from '../context/MeowsTokenContext';
+import { MeowsContext } from '../context/MeowsContext';
 import { Loader } from './'
+import meows_coin from '../../images/meows_coin.png';
+import eth_coin from '../../images/eth_coin.png';
 
 const Input = ({ placeholder, name, type, value, handleChange }) => (
     <input
         placeholder={placeholder}
         type={type}
-        step="0.0001"
         value={value}
-        onChange={(e) => handleChange(e, name)}
-        className="my-2 w-full rounded-sm p-2 outline-none bg-[#141720] text-white border-none text-sm"
+        onInput={(e) => handleChange(e, name)}
+        className="w-[120px] rounded-sm bg-[#141720] text-white text-xl border-none border-transparent focus:border-transparent focus:ring-0 focus:outline-none font-black"
     />
 );
 
 const Welcome = () => {
-    const { connectedAccount } = useContext(MeowsTokenContext);
+    const { connectedAccount, dexState, setDexState, dexData, setDexData, handleChange, sendExchange } = useContext(MeowsContext);
     
     const connectWallet = () => {
 
     } 
 
-    const handleSwap = () => {
+    const handleSwap = (e) => {
+        const { meowsAmount, ethAmount } = formData;
 
+        e.preventDefault();
+
+        if(!meowsAmount || !ethAmount) return;
+
+        sendExchange();
     }
 
     return (
@@ -53,7 +61,7 @@ const Welcome = () => {
                         <div className="flex justify-between flex-col w-full h-full">
                             <div className="flex justify-between items-start">
                                 <div className="w-10 h-10 rounded-full border-2 border-white flex justify-center items-center">
-                                    <SiEthereum fontSize={21} color="#fff" />
+                                    <IoLogoOctocat fontSize={25} color="#fff" />
                                 </div>
                                 <BsInfoCircle fontSize={17} color="#fff" />
                             </div>
@@ -68,11 +76,24 @@ const Welcome = () => {
                         </div>
                     </div>
 
-                    <div className="p-5 sm:w-96 w-full flex flex-col justify-start items-center blue-glassmorphism">
-                        <Input placeholder="ETH: 0.0" name="ethAmount" type="number" handleChange={()=>{}}/>
-                        <Input placeholder="MEOWs 0.0" name="meowsAmount" type="number" handleChange={()=>{}}/>
-
-                        <div className="h-[1px] w-full bg-gray-400 my-2" />
+                    <div className="flex p-5 sm:w-96 w-full flex flex-col justify-start items-center blue-glassmorphism relative">
+                        <div className="flex flex-row rounded-lg w-full bg-[#141720] p-3 my-1">
+                            <img src={dexState?meows_coin:eth_coin} alt="logo" className="w-12 h-12 white-glassmorphism" />
+                            <span className="flex flex-col w-full p-1">
+                                <span className="text-white text-[11px] font-bold">Swap From:</span>
+                                <span className="text-white font-black text-lg">{dexState?"MEOWs":"ETH"}</span>
+                            </span>
+                            <Input placeholder="0.0" value={dexState?dexData.meowsAmount:dexData.ethAmount} name={dexState?"meowsAmount":"ethAmount"} type="number" handleChange={handleChange}/>
+                        </div>
+                        <BsFillArrowDownSquareFill fontSize={40} color="#fff" className="white-glassmorphism border-2 absolute top-[33%]" onClick={() => {setDexState(!dexState);}}/>
+                        <div className="flex flex-row rounded-lg w-full bg-[#141720] p-3 my-1">
+                            <img src={dexState?eth_coin:meows_coin} alt="logo" className="w-12 h-12 white-glassmorphism" />
+                            <span className="flex flex-col w-full p-1">
+                                <span className="text-white text-[11px] font-bold">Swap To:</span>
+                                <span className="text-white font-black text-lg">{dexState?"ETH":"MEOWs"}</span>
+                            </span>
+                            <Input placeholder="0.0" value={dexState?dexData.ethAmount:dexData.meowsAmount} name={dexState?"ethAmount":"meowsAmount"} type="number" handleChange={handleChange}/>
+                        </div>
 
                         {false ? (
                             <Loader />
@@ -80,7 +101,7 @@ const Welcome = () => {
                             <button
                             type="button"
                             onClick={handleSwap}
-                            className="text-white w-full mt-2 border-[1px] p-2 border-[#3d4f7c] rounded-full cursor-pointer"
+                            className="text-white w-full mt-2 border-[1px] p-2 border-[#3d4f7c] rounded-lg cursor-pointer"
                             >
                                 Swap Now
                             </button>
