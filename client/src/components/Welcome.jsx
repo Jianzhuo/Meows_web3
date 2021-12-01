@@ -1,7 +1,7 @@
 import React, { useContext, useState } from 'react';
 import { AiFillPlayCircle } from 'react-icons/ai';
 import { SiEthereum } from 'react-icons/si';
-import { BsInfoCircle, BsFillArrowDownSquareFill, BsFillArrowDownCircleFill } from 'react-icons/bs';
+import { BsInfoCircle, BsFillArrowDownSquareFill, BsArrowRight } from 'react-icons/bs';
 import { IoLogoOctocat } from 'react-icons/io'
 
 import { MeowsContext } from '../context/MeowsContext';
@@ -20,20 +20,21 @@ const Input = ({ placeholder, name, type, value, handleChange }) => (
 );
 
 const Welcome = () => {
-    const { connectedAccount, dexState, setDexState, dexData, setDexData, handleChange, sendExchange } = useContext(MeowsContext);
-    
-    const connectWallet = () => {
-
-    } 
+    const { connectedAccount, dexState, setDexState, dexData, setDexData, handleChange, sendExchangeTransaction, isLoading, allowance, approveMeows, balance } = useContext(MeowsContext);
 
     const handleSwap = (e) => {
-        const { meowsAmount, ethAmount } = formData;
+        const { meowsAmount, ethAmount } = dexData;
 
         e.preventDefault();
 
         if(!meowsAmount || !ethAmount) return;
 
-        sendExchange();
+        if(parseInt(allowance, 16) < parseInt(dexData.meowsAmount) && dexState){
+            approveMeows();
+        }else{
+            sendExchangeTransaction();
+        }
+
     }
 
     return (
@@ -46,14 +47,16 @@ const Welcome = () => {
                     <p className="text-left mt-5 text-white font-light md:w-9/12 w-11/12 text-base">
                         A Decentralized Token for every cat lover <br /> to unlocks a universe of infinite experiences.
                     </p>
-                    <button
-                        type="button"
-                        onClick={connectWallet}
-                        className="flex flex-row justify-center items-center my-5 bg-[#2952e3] p-3 rounded-full cursor-pointer hover:bg-[#2546bd]">
-                        <p className="text-white text-base font-semibold">
-                            Mint MEOWs
-                        </p>
-                    </button>
+
+                    <div className="flex flex-col my-5">
+                        <span className="w-[200px] flex justify-between items-center text-white text-base font-semibold my-2 py-3 px-10 rounded-full cursor-pointer hover:bg-[#1e2339] white-glassmorphism">
+                            Discover KittyVerse <BsArrowRight fontSize={25} color="#fff"/>
+                        </span>
+                        <span className="flex justify-between items-center text-white text-base font-semibold m-2 py-3 px-10 rounded-full cursor-pointer hover:bg-[#1e2339] white-glassmorphism">
+                            Read MeowPaper <BsArrowRight fontSize={25} color="#fff"/>
+                        </span>
+                    </div>
+
                 </div>
 
                 <div className="flex flex-col flex-1 items-center justify-start w-full mf:mt-0 mt-10">
@@ -65,13 +68,19 @@ const Welcome = () => {
                                 </div>
                                 <BsInfoCircle fontSize={17} color="#fff" />
                             </div>
-                            <div>
-                                <p className="text-white font-light text-sm">
-                                    {connectedAccount && <span>{connectedAccount.substring(0,6) + "..." + connectedAccount.substring(connectedAccount.length - 4)}</span>}
-                                </p>
-                                <p className="text-white font-semibold text-lg mt-1">
-                                    MEOWs
-                                </p>
+                            <div className="flex justify-between items-end"> 
+                                <div>
+                                    <p className="text-white font-light text-sm">
+                                        {connectedAccount && <span>{connectedAccount.substring(0,6) + "..." + connectedAccount.substring(connectedAccount.length - 4)}</span>}
+                                    </p>
+                                    <p className="text-white font-semibold text-lg mt-1">
+                                        MEOWs
+                                    </p>
+                                </div>
+                                {balance&&
+                                    <span className="text-white text-xl mt-1">M${parseInt(balance, 16)}</span>
+                                }
+                                
                             </div>
                         </div>
                     </div>
@@ -85,7 +94,7 @@ const Welcome = () => {
                             </span>
                             <Input placeholder="0.0" value={dexState?dexData.meowsAmount:dexData.ethAmount} name={dexState?"meowsAmount":"ethAmount"} type="number" handleChange={handleChange}/>
                         </div>
-                        <BsFillArrowDownSquareFill fontSize={40} color="#fff" className="white-glassmorphism border-2 absolute top-[33%]" onClick={() => {setDexState(!dexState);}}/>
+                        <BsFillArrowDownSquareFill fontSize={40} color="#fff" className="white-glassmorphism border-2 absolute top-[33%] cursor-pointer" onClick={() => {setDexState(!dexState);}}/>
                         <div className="flex flex-row rounded-lg w-full bg-[#141720] p-3 my-1">
                             <img src={dexState?eth_coin:meows_coin} alt="logo" className="w-12 h-12 white-glassmorphism" />
                             <span className="flex flex-col w-full p-1">
@@ -95,15 +104,17 @@ const Welcome = () => {
                             <Input placeholder="0.0" value={dexState?dexData.ethAmount:dexData.meowsAmount} name={dexState?"ethAmount":"meowsAmount"} type="number" handleChange={handleChange}/>
                         </div>
 
-                        {false ? (
+                        {isLoading ? (
                             <Loader />
                         ) : (
                             <button
                             type="button"
                             onClick={handleSwap}
-                            className="text-white w-full mt-2 border-[1px] p-2 border-[#3d4f7c] rounded-lg cursor-pointer"
+                            className="text-white w-full mt-2 border-[1px] p-2 border-[#3d4f7c] rounded-lg cursor-pointer white-glassmorphism hover:bg-[#1e2339]"
                             >
-                                Swap Now
+                                {parseInt(allowance, 16) < parseInt(dexData.meowsAmount) && dexState  
+                                 ? "Allow Meows" : "Swap Now"
+                                }
                             </button>
                         )}
                     </div>
