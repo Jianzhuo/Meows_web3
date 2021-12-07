@@ -115,6 +115,10 @@ input[type="number"]{
     -moz-appearance: textfield; 
 }
 
+.address-hider{
+  background-image: -webkit-gradient(linear, right top, left top, color-stop(22%, #191d2f), to(rgba(24, 23, 31, 0)))
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
